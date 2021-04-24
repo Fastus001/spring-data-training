@@ -13,8 +13,11 @@ import pl.sdacademy.spring.springdatatraining.person.PersonRepository;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest
 class SpringDataTrainingApplicationTests {
+
 
     @Autowired
     private PersonReader personReader;
@@ -31,7 +34,7 @@ class SpringDataTrainingApplicationTests {
     @Test
     void shouldFindAllPeople() {
         // when
-        List<Person> people = personRepository.methodCall(); // TODO call a proper method on the repository so the test passes;
+        List<Person> people = personRepository.findAll(); //
 
         // then
         Assertions.assertEquals(2000, people.size());
@@ -40,11 +43,26 @@ class SpringDataTrainingApplicationTests {
     @Test
     void shouldRemovePersonWithId1000() {
         // when
-        personRepository.methodCall(1000L); // TODO call a method to remove a person with id = 1000
-        List<Person> people = personRepository.methodCall(); // TODO find all remaining people
+        personRepository.deleteById(1000L); // TODO call a method to remove a person with id = 1000
+        List<Person> people = personRepository.findAll(); // TODO find all remaining people
 
         // then
         Assertions.assertEquals(1999, people.size());
+    }
+
+    @Test
+    void shouldRemovePersonWithId() {
+        //given
+        final Long id = personRepository.findAll().stream().findFirst().get().getId();
+        assertTrue(personRepository.findById(id).isPresent());
+
+
+        // when
+        personRepository.deleteById(id);
+
+
+        //then
+        assertFalse(personRepository.findById(id).isPresent());
     }
 
     @Test
@@ -53,7 +71,7 @@ class SpringDataTrainingApplicationTests {
         String name = "Krystyna";
 
         // when
-        List<Person> people = personRepository.methodCall(name);
+        List<Person> people = personRepository.findAllByName(name);
 
         // then
         Assertions.assertEquals(9, people.size());
@@ -65,7 +83,7 @@ class SpringDataTrainingApplicationTests {
         String sex = "M";
 
         // when
-        List<Person> people = personRepository.methodCall(sex);
+        List<Person> people = personRepository.findAllBySex(sex);
 
         // then
         Assertions.assertEquals(1012, people.size());
@@ -78,7 +96,7 @@ class SpringDataTrainingApplicationTests {
         String sex = "F";
 
         // when
-        List<Person> people = personRepository.methodCall(lastName, sex);
+        List<Person> people = personRepository.findAllByLastNameAndSex(lastName, sex);
 
         // then
         Assertions.assertEquals(9, people.size());
@@ -90,7 +108,7 @@ class SpringDataTrainingApplicationTests {
         String lastName = "Adamczyk"; // TODO tu jest haczyk :)
 
         // when
-        List<Person> people = personRepository.methodCall(lastName);
+        List<Person> people = personRepository.findAllByLastNameIgnoreCaseOrderByBirthDateAsc(lastName);
 
         // then
         Assertions.assertEquals(21, people.size());
@@ -104,10 +122,22 @@ class SpringDataTrainingApplicationTests {
         PageRequest pageRequest = PageRequest.of(1, 50);
 
         // when
-        Page<Person> people = personRepository.methodCall(pageRequest);
+        Page<Person> people = personRepository.findAll(pageRequest);
 
         // then
         Assertions.assertEquals(40, people.getTotalPages());
         Assertions.assertEquals(50, people.getSize());
     }
+
+    @Test
+    void shouldGetAllPersonsWithGivenNames(){
+        // given
+        String name = "Krystyna";
+
+        //when
+        final List<Person> peopleByName = personRepository.findMultiplePeopleByName(name);
+
+        assertEquals(9, peopleByName.size());
+    }
+
 }

@@ -1,6 +1,5 @@
 package pl.sdacademy.spring.springdatatraining.person;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import pl.sdacademy.spring.springdatatraining.csv.CsvFile;
@@ -12,10 +11,10 @@ import java.util.List;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class PersonReader {
 
-    private final PersonRepository repository;
+//    private final PersonRepository repository;
     private static final String PERSON_CSV_FILE = "person.csv";
 
     public List<Person> read() {
